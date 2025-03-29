@@ -94,8 +94,32 @@ http.createServer(async (request, response) => {
           break;
     
         case ("/files/move" + "POST"):
-          // move file
+          request.on("data", async (content) => {
+            if (await fileReader.isFileExist(fileName)) {
+              const moveTo = DIRECTORY_PATH + JSON.parse(content)?.moveTo;
+              if (await fileReader.isFileExist(moveTo)) {
+                response.writeHead(400, { "Content-Type": "application/json" });
+                response.end(JSON.stringify({ message: "Move file position already exist!" })) 
+                return;
+              }
+              fileReader.moveFile(fileName ?? "", moveTo)
+                .then(() => {
+                    response.writeHead(200, { "Content-Type": "application/json" });
+                    response.end(JSON.stringify({ message: "File moving!", from: fileName, to: moveTo }));
+                  }
+                )
+                .catch((error) => {
+                  response.writeHead(400, { "Content-Type": "application/json" });
+                  response.end(JSON.stringify({ message: error }));
+                });
+            }
+            else {
+              response.writeHead(400, { "Content-Type": "application/json" });
+              response.end(JSON.stringify({ message: "Bad file name!" })) 
+            }
+          })
           break;
+
       default:
         response.writeHead(400, { "Content-Type": "application/json" });
         response.end(JSON.stringify({ message: "Bad request" }))

@@ -26,7 +26,7 @@ export class FileRead {
         try {
             await fs.copyFile(src, dest);
         } catch (error) {
-            console.error('Ошибка при копировании файла:', error);
+            console.error('Error while copeing file:', error);
             throw error;
         }
     }
@@ -36,6 +36,16 @@ export class FileRead {
             await fs.unlink(path);
         } catch (error) {
             console.error('Error while deleting file:', error);
+            throw error;
+        }
+    }
+
+    public async moveFile(src : string, dest : string) {
+        try {
+            await this.checkWorkDirectory(dest);
+            await fs.rename(src, dest);
+        } catch (error) {
+            console.error('Error while moving file', error);
             throw error;
         }
     }
