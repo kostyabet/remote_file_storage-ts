@@ -12,118 +12,123 @@ http.createServer(async (request, response) => {
   console.log(new Date().toISOString(), ":\t", request.method, '->', url.href);
   fileReader.ensureDirectoryExists(DIRECTORY_PATH).then(
     async () => {
-      switch (currentMethod) {
-        case ("/files" + "GET"):
-          if (await fileReader.isFileExist(fileName)) {
-            fileReader.readFile(fileName ?? "")
+      try {
+        switch (currentMethod) {
+          case ("/files" + "GET"):
+            if (await fileReader.isFileExist(fileName)) {
+              fileReader.readFile(fileName ?? "")
+                .then((data) => {
+                    response.writeHead(200, { "Content-Type": "application/json" });
+                    response.end(JSON.stringify({ message: "File reading!", filePath: fileName, data: data }));
+                  }
+                )
+                .catch((error) => {
+                  response.writeHead(400, { "Content-Type": "application/json" });
+                  response.end(JSON.stringify({ message: error }));
+                });
+            }
+            else {
+              response.writeHead(400, { "Content-Type": "application/json" });
+              response.end(JSON.stringify({ message: "Bad file name!" })) 
+            }
+            break;
+      
+          case ("/files" + "PUT"):
+            request.on("data", (content) => {
+              fileReader.rewriteFile(fileName ?? "", content.toString())
               .then((data) => {
                   response.writeHead(200, { "Content-Type": "application/json" });
-                  response.end(JSON.stringify({ message: "File reading!", filePath: fileName, data: data }));
+                  response.end(JSON.stringify({ message: "File rewriting!", filePath: fileName, data: content.toString() }));
                 }
               )
               .catch((error) => {
                 response.writeHead(400, { "Content-Type": "application/json" });
                 response.end(JSON.stringify({ message: error }));
               });
-          }
-          else {
-            response.writeHead(400, { "Content-Type": "application/json" });
-            response.end(JSON.stringify({ message: "Bad file name!" })) 
-          }
-          break;
-    
-        case ("/files" + "PUT"):
-          request.on("data", (content) => {
-            fileReader.rewriteFile(fileName ?? "", content.toString())
-            .then((data) => {
-                response.writeHead(200, { "Content-Type": "application/json" });
-                response.end(JSON.stringify({ message: "File rewriting!", filePath: fileName, data: content.toString() }));
-              }
-            )
-            .catch((error) => {
-              response.writeHead(400, { "Content-Type": "application/json" });
-              response.end(JSON.stringify({ message: error }));
             });
-          });
-          break;
-    
-        case ("/files" + "DELETE"):
-          if (await fileReader.isFileExist(fileName)) {
-            fileReader.deleteFile(fileName ?? "")
-              .then(() => {
-                  response.writeHead(200, { "Content-Type": "application/json" });
-                  response.end(JSON.stringify({ message: "File deleting!", filePath: fileName }));
+            break;
+      
+          case ("/files" + "DELETE"):
+            if (await fileReader.isFileExist(fileName)) {
+              fileReader.deleteFile(fileName ?? "")
+                .then(() => {
+                    response.writeHead(200, { "Content-Type": "application/json" });
+                    response.end(JSON.stringify({ message: "File deleting!", filePath: fileName }));
+                  }
+                )
+                .catch((error) => {
+                  response.writeHead(400, { "Content-Type": "application/json" });
+                  response.end(JSON.stringify({ message: error }));
+                });
+            }
+            else {
+              response.writeHead(400, { "Content-Type": "application/json" });
+              response.end(JSON.stringify({ message: "Bad file name!" })) 
+            }
+            break;
+      
+          case ("/files/copy" + "POST"):
+            request.on("data", async (content) => {
+              if (await fileReader.isFileExist(fileName)) {
+                const newName = DIRECTORY_PATH + JSON.parse(content)?.newName;
+                if (await fileReader.isFileExist(newName)) {
+                  response.writeHead(400, { "Content-Type": "application/json" });
+                  response.end(JSON.stringify({ message: "Copy file exist!" })) 
+                  return;
                 }
-              )
-              .catch((error) => {
-                response.writeHead(400, { "Content-Type": "application/json" });
-                response.end(JSON.stringify({ message: error }));
-              });
-          }
-          else {
-            response.writeHead(400, { "Content-Type": "application/json" });
-            response.end(JSON.stringify({ message: "Bad file name!" })) 
-          }
-          break;
-    
-        case ("/files/copy" + "POST"):
-          request.on("data", async (content) => {
-            if (await fileReader.isFileExist(fileName)) {
-              const newName = DIRECTORY_PATH + JSON.parse(content)?.newName;
-              if (await fileReader.isFileExist(newName)) {
-                response.writeHead(400, { "Content-Type": "application/json" });
-                response.end(JSON.stringify({ message: "Copy file exist!" })) 
-                return;
+                fileReader.copyFile(fileName ?? "", newName)
+                  .then(() => {
+                      response.writeHead(200, { "Content-Type": "application/json" });
+                      response.end(JSON.stringify({ message: "File copeing!", from: fileName, to: newName }));
+                    }
+                  )
+                  .catch((error) => {
+                    response.writeHead(400, { "Content-Type": "application/json" });
+                    response.end(JSON.stringify({ message: error }));
+                  });
               }
-              fileReader.copyFile(fileName ?? "", newName)
-                .then(() => {
-                    response.writeHead(200, { "Content-Type": "application/json" });
-                    response.end(JSON.stringify({ message: "File copeing!", from: fileName, to: newName }));
-                  }
-                )
-                .catch((error) => {
-                  response.writeHead(400, { "Content-Type": "application/json" });
-                  response.end(JSON.stringify({ message: error }));
-                });
-            }
-            else {
-              response.writeHead(400, { "Content-Type": "application/json" });
-              response.end(JSON.stringify({ message: "Bad file name!" })) 
-            }
-          })
-          break;
-    
-        case ("/files/move" + "POST"):
-          request.on("data", async (content) => {
-            if (await fileReader.isFileExist(fileName)) {
-              const moveTo = DIRECTORY_PATH + JSON.parse(content)?.moveTo;
-              if (await fileReader.isFileExist(moveTo)) {
+              else {
                 response.writeHead(400, { "Content-Type": "application/json" });
-                response.end(JSON.stringify({ message: "Move file position already exist!" })) 
-                return;
+                response.end(JSON.stringify({ message: "Bad file name!" })) 
               }
-              fileReader.moveFile(fileName ?? "", moveTo)
-                .then(() => {
-                    response.writeHead(200, { "Content-Type": "application/json" });
-                    response.end(JSON.stringify({ message: "File moving!", from: fileName, to: moveTo }));
-                  }
-                )
-                .catch((error) => {
+            })
+            break;
+      
+          case ("/files/move" + "POST"):
+            request.on("data", async (content) => {
+              if (await fileReader.isFileExist(fileName)) {
+                const moveTo = DIRECTORY_PATH + JSON.parse(content)?.moveTo;
+                if (await fileReader.isFileExist(moveTo)) {
                   response.writeHead(400, { "Content-Type": "application/json" });
-                  response.end(JSON.stringify({ message: error }));
-                });
-            }
-            else {
-              response.writeHead(400, { "Content-Type": "application/json" });
-              response.end(JSON.stringify({ message: "Bad file name!" })) 
-            }
-          })
-          break;
+                  response.end(JSON.stringify({ message: "Move file position already exist!" })) 
+                  return;
+                }
+                fileReader.moveFile(fileName ?? "", moveTo)
+                  .then(() => {
+                      response.writeHead(200, { "Content-Type": "application/json" });
+                      response.end(JSON.stringify({ message: "File moving!", from: fileName, to: moveTo }));
+                    }
+                  )
+                  .catch((error) => {
+                    response.writeHead(400, { "Content-Type": "application/json" });
+                    response.end(JSON.stringify({ message: error }));
+                  });
+              }
+              else {
+                response.writeHead(400, { "Content-Type": "application/json" });
+                response.end(JSON.stringify({ message: "Bad file name!" })) 
+              }
+            })
+            break;
 
-      default:
+        default:
+          response.writeHead(400, { "Content-Type": "application/json" });
+          response.end(JSON.stringify({ message: "Bad request" }))
+          break;
+        }
+      } catch (error) {
         response.writeHead(400, { "Content-Type": "application/json" });
-        response.end(JSON.stringify({ message: "Bad request" }))
-        break;
+        response.end(JSON.stringify(JSON.stringify(error)))
       }
     }
   );
