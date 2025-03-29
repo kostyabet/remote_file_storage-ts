@@ -1,0 +1,112 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0;
+}
+
+header {
+    border-radius: 0 0 0.75vh 0.75vh;
+    background-color: var(--header-color);
+    color: var(--text-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 0.75vh 0.75vh 0 0;
+    background-color: var(--footer-color);
+    color: var(--text-color);
+}
+
+main {
+    margin: 8.5vh 2.5vh;
+}
+
+.headline {
+    padding: 1vh;
+}
+
+.container {
+    width: 100%;
+}
+
+.flex-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.flex-row .tip,
+.flex-row .year {
+    padding:  1.5vh;
+}
+
+.card {
+    color: var(--text-color);
+    border: 0.2vh solid var(--border-color);
+    border-radius: 0.75vh;
+    background-color: var(--card-color);
+}
+
+.card .title {
+    padding: 0.95vh 0.95vh 0 0.95vh;
+    font-size: 2.2vh;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 2vh;
+    row-gap: 2vh;
+}
+
+.grid .card:last-child {
+    grid-column: span 2;
+}
+
+.card .description {
+    font-size: 1.25vh;
+    margin: 0;
+    padding: 0 1vh 1vh 1vh;
+}
+
+.card form {
+    margin: 0 0.9vh 0.9vh 0.9vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.card form input {
+    margin: 0 0 0.3vh 0;
+    border-radius: 0.5vh;
+    border-color: var(--text-color);
+    border-width: 0.2vh;
+    background-color: var(--card-button-font-color);
+    color: var(--card-button-text-color);
+    padding: 0.4vh;
+}
+
+.card form button {
+    border-color: var(--text-color);
+    border-width: 0.2vh;
+    border-radius: 0.5vh;
+    background-color: var(--card-button-font-color);
+    color: var(--card-button-text-color);
+    cursor: pointer;
+}
