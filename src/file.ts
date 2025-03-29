@@ -1,6 +1,8 @@
 import * as fs from 'fs/promises';
-import path from 'path';
-
+/*
+    To Do:
+    1. When delete file from folder check is folder empty and delete if true
+*/
 export class FileRead {
     public async readFile(path : string) : Promise<string> {
         try {
