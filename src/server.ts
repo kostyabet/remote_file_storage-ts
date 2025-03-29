@@ -48,8 +48,24 @@ http.createServer(async (request, response) => {
           break;
     
         case ("/files" + "DELETE"):
-          // delete user file
+          if (await fileReader.isFileExist(fileName)) {
+            fileReader.deleteFile(fileName ?? "")
+              .then(() => {
+                  response.writeHead(200, { "Content-Type": "application/json" });
+                  response.end(JSON.stringify({ message: "File deleting!", filePath: fileName }));
+                }
+              )
+              .catch((error) => {
+                response.writeHead(400, { "Content-Type": "application/json" });
+                response.end(JSON.stringify({ message: error }));
+              });
+          }
+          else {
+            response.writeHead(400, { "Content-Type": "application/json" });
+            response.end(JSON.stringify({ message: "Bad file name!" })) 
+          }
           break;
+
         case ("/files/copy" + "POST"):
           // copy file
           break;

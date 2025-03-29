@@ -21,6 +21,15 @@ export class FileRead {
         }
     }
 
+    public async deleteFile(path : string) {
+        try {
+            await fs.unlink(path);
+        } catch (error) {
+            console.error('Error while deleting file:', error);
+            throw error;
+        }
+    }
+
     public async isFileExist(path : any) : Promise<boolean> {
         if (!path) return false;
         try {
