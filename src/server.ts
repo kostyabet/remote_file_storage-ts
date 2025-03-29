@@ -37,7 +37,7 @@ http.createServer(async (request, response) => {
             fileReader.rewriteFile(fileName ?? "", content.toString())
             .then((data) => {
                 response.writeHead(200, { "Content-Type": "application/json" });
-                response.end(JSON.stringify({ message: "File rewriting!", filePath: fileName, data: data }));
+                response.end(JSON.stringify({ message: "File rewriting!", filePath: fileName, data: content.toString() }));
               }
             )
             .catch((error) => {
@@ -65,10 +65,34 @@ http.createServer(async (request, response) => {
             response.end(JSON.stringify({ message: "Bad file name!" })) 
           }
           break;
-
+    
         case ("/files/copy" + "POST"):
-          // copy file
+          request.on("data", async (content) => {
+            if (await fileReader.isFileExist(fileName)) {
+              const newName = DIRECTORY_PATH + JSON.parse(content)?.newName;
+              if (await fileReader.isFileExist(newName)) {
+                response.writeHead(400, { "Content-Type": "application/json" });
+                response.end(JSON.stringify({ message: "Copy file exist!" })) 
+                return;
+              }
+              fileReader.copyFile(fileName ?? "", newName)
+                .then(() => {
+                    response.writeHead(200, { "Content-Type": "application/json" });
+                    response.end(JSON.stringify({ message: "File copeing!", from: fileName, to: newName }));
+                  }
+                )
+                .catch((error) => {
+                  response.writeHead(400, { "Content-Type": "application/json" });
+                  response.end(JSON.stringify({ message: error }));
+                });
+            }
+            else {
+              response.writeHead(400, { "Content-Type": "application/json" });
+              response.end(JSON.stringify({ message: "Bad file name!" })) 
+            }
+          })
           break;
+    
         case ("/files/move" + "POST"):
           // move file
           break;

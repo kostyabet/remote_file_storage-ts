@@ -1,4 +1,5 @@
 import * as fs from 'fs/promises';
+import path from 'path';
 
 export class FileRead {
     public async readFile(path : string) : Promise<string> {
@@ -11,12 +12,21 @@ export class FileRead {
         }
     }
 
-    public async rewriteFile(path : string, content : string) : Promise<string> {
+    public async rewriteFile(path : string, content : string) {
         try {
+            await this.checkWorkDirectory(path);
             await fs.writeFile(path, content, 'utf-8');
-            return content;
         } catch(error) {
             console.error('Error while rewriting file:', error);
+            throw error;
+        }    
+    }
+
+    public async copyFile(src : string, dest : string) {
+        try {
+            await fs.copyFile(src, dest);
+        } catch (error) {
+            console.error('Ошибка при копировании файла:', error);
             throw error;
         }
     }
@@ -40,7 +50,20 @@ export class FileRead {
         }
     }
 
-    public async ensureDirectoryExists(dirPath: string): Promise<void> {
+    private async checkWorkDirectory(dirPath : string) : Promise<void> {
+        const dir = dirPath.split('/')
+            .slice(2, -1);
+        let allPath = dirPath.split('/')
+            .slice(0, 2)
+            .map(el => el + "/")
+            .reduce((prev, current) => prev += current);
+        for (const value of dir) {
+            allPath += value + "/";
+            await this.ensureDirectoryExists(allPath);
+        }
+    }
+
+    public async ensureDirectoryExists(dirPath: string) : Promise<void> {
         try {
             await fs.access(dirPath);
         } catch {
