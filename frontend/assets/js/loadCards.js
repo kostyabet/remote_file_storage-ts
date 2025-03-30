@@ -31,21 +31,27 @@ const loadCards = [
             e.preventDefault();
         }
     },
-    // { 
-    //     formId: 'rewrite',
-    //     title: 'Rewriting file',
-    //     description: 'Some info about file',
-    //     components: [
-    //         {
-    //             type: 'input',
-    //             name: 'File name'
-    //         },
-    //         {
-    //             type: 'textarea',
-    //             name: 'File data'
-    //         }
-    //     ]
-    // },
+    { 
+        formId: 'rewrite',
+        title: 'Rewriting file',
+        description: 'Some info about file',
+        components: [
+            {
+                type: 'input',
+                placeholder: 'File name',
+                name: 'file_name'
+            },
+            {
+                type: 'textarea',
+                placeholder: 'File data',
+                name: 'file_data'
+            }
+        ],
+        submitFunction: (e) => {
+            RewriteFile(document.rewrite.file_name.value, document.rewrite.file_data.value);
+            e.preventDefault();
+        }
+    },
     // { 
     //     formId: 'copy',
     //     title: 'Copy file',

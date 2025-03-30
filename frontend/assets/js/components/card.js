@@ -16,7 +16,7 @@ function Card(
                     components.map((component) => 
                         component?.type === 'input'
                             ? `<input name="${component.name}" placeholder="${component.placeholder}" required/>`
-                            : `<textarea placeholder="${component.placeholder}"></textarea>`
+                            : `<textarea name="${component.name}" placeholder="${component.placeholder}"></textarea>`
                     ).reduce((prev, cur) => prev += cur)
                     : `<h4>No one input</h4>`
                 }
