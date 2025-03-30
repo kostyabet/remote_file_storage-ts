@@ -115,3 +115,6 @@ main {
 header div img {
     padding: 1vh;
 }
+
+input:invalid {border-color: red; }
+input:valid { border-color: green;}

@@ -5,6 +5,16 @@ const PORT = 3000;
 const DIRECTORY_PATH = "./uploads/"
 
 http.createServer(async (request, response) => {
+  response.setHeader('Access-Control-Allow-Origin', '*');
+  response.setHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
+  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (request.method === "OPTIONS") {
+    response.writeHead(204);
+    response.end();
+    return;
+  }
+
   const url = new URL(request.url || "", `http://${request.headers.host}`);
   const fileReader = new FileRead();
   const fileName = DIRECTORY_PATH + url.searchParams.get("fileName");

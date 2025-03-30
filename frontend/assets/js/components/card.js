@@ -3,6 +3,7 @@ function Card(
     description,
     formId,
     components = [],
+    submitFunction,
     sendButtonValue = "Send",
     resetButtonValue = "Reset"
 ) {
@@ -10,18 +11,18 @@ function Card(
         <div class="card">
             <h2 class="title">${title}</h2>
             <p class="description">${description}</p>
-            <form id=${formId}>
+            <form id="${formId}" name="${formId}">
                 ${components.length ? 
                     components.map((component) => 
                         component?.type === 'input'
-                            ? `<input placeholder="${component.name}"/>`
-                            : `<textarea placeholder="${component.name}"></textarea>`
+                            ? `<input name="${component.name}" placeholder="${component.placeholder}" required/>`
+                            : `<textarea placeholder="${component.placeholder}"></textarea>`
                     ).reduce((prev, cur) => prev += cur)
                     : `<h4>No one input</h4>`
                 }
                 <div class="flex-row">
-                    <button type="submit">${sendButtonValue}</button>
-                    <button type="reset">${resetButtonValue}</button>
+                    <input name="send" type="submit" value="${sendButtonValue}" />
+                    <input name="reset" type="reset" value="${resetButtonValue}" />
                 </div>
             </form>
         </div>
