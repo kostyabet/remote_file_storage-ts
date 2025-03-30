@@ -52,36 +52,48 @@ const loadCards = [
             e.preventDefault();
         }
     },
-    // { 
-    //     formId: 'copy',
-    //     title: 'Copy file',
-    //     description: 'Some info about file',
-    //     components: [
-    //         {
-    //             type: 'input',
-    //             name: 'Src file'
-    //         },
-    //         {
-    //             type: 'input',
-    //             name: 'Dest file'
-    //         }
-    //     ]
-    // },
-    // { 
-    //     formId: 'move',
-    //     title: 'Move file',
-    //     description: 'Some info about file',
-    //     components: [
-    //         {
-    //             type: 'input',
-    //             name: 'Src file'
-    //         },
-    //         {
-    //             type: 'input',
-    //             name: 'Dest file'
-    //         }
-    //     ]
-    // },
+    { 
+        formId: 'copy',
+        title: 'Copy file',
+        description: 'Some info about file',
+        components: [
+            {
+                type: 'input',
+                placeholder: 'Source name',
+                name: 'src_name'
+            },
+            {
+                type: 'input',
+                placeholder: 'Destination file',
+                name: 'dest_name'
+            }
+        ],
+        submitFunction: (e) => {
+            CopyFile(document.copy.src_name.value, document.copy.dest_name.value);
+            e.preventDefault();
+        }
+    },
+    { 
+        formId: 'move',
+        title: 'Move file',
+        description: 'Some info about file',
+        components: [
+            {
+                type: 'input',
+                placeholder: 'Source name',
+                name: 'src_name'
+            },
+            {
+                type: 'input',
+                placeholder: 'Destination file',
+                name: 'dest_name'
+            }
+        ],
+        submitFunction: (e) => {
+            MoveFile(document.move.src_name.value, document.move.dest_name.value);
+            e.preventDefault();
+        }
+    },
 ]
 
 const cards = document.getElementById("cards");
